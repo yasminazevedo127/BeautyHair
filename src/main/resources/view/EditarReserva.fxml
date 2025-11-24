@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controller.EditarReservaController"
+            stylesheets="@style.css"
+            prefWidth="420" prefHeight="420">
+
+    <children>
+
+        <VBox spacing="15" alignment="TOP_LEFT"
+              AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20">
+
+            <Label text="Editar Reserva" styleClass="title"/>
+
+            <VBox spacing="5">
+                <Label text="Cliente:"/>
+                <TextField fx:id="txtCliente"/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Serviço:"/>
+                <TextField fx:id="txtServico"/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Data:"/>
+                <TextField fx:id="txtData" promptText="DD/MM/AAAA"/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Horário:"/>
+                <TextField fx:id="txtHorario" promptText="Ex.: 14:30"/>
+            </VBox>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT" padding="10 0 0 0">
+
+                <Button fx:id="btnCancelar"
+                        text="Cancelar"
+                        styleClass="button-secondary"
+                        onAction="#onCancelar"/>
+
+                <Button fx:id="btnSalvar"
+                        text="Salvar"
+                        styleClass="button-primary"
+                        onAction="#onSalvar"/>
+
+            </HBox>
+
+        </VBox>
+
+    </children>
+
+</AnchorPane>

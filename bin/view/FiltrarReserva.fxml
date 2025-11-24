@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/20"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.FiltrarReservaController"
+      spacing="10">
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <Label text="Filtrar Reservas" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <TextField fx:id="txtCliente" promptText="Cliente"/>
+    <TextField fx:id="txtServico" promptText="Serviço"/>
+    <TextField fx:id="txtProfissional" promptText="Profissional"/>
+    <TextField fx:id="txtData" promptText="Data (ex: 12/11/2025)"/>
+
+    <HBox spacing="10">
+        <Button fx:id="btnAplicar" text="Aplicar Filtros" style="-fx-background-color: #FF69B4; -fx-text-fill: white;"/>
+        <Button fx:id="btnLimpar" text="Limpar"/>
+    </HBox>
+</VBox>

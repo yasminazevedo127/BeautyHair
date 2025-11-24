@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/20"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.MainViewController"
+      spacing="10">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <StackPane>
+        <Pane prefHeight="60" style="-fx-background-color: #FF69B4;" />
+        <Label text="BeautyHair"
+               style="-fx-font-size: 24px; -fx-text-fill: white; -fx-font-weight: bold;" />
+    </StackPane>
+
+    <HBox spacing="10">
+        <Button fx:id="btnNovaReserva" text="Nova Reserva" style="-fx-background-color: #FF69B4; -fx-text-fill: white; -fx-background-radius: 8;" />
+        <Button fx:id="btnFiltrar" text="Filtrar" />
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnRefresh" text="Atualizar" />
+    </HBox>
+
+    <TableView fx:id="tableReservas" prefHeight="420" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn text="Cliente" fx:id="colCliente" prefWidth="180"/>
+            <TableColumn text="Serviço" fx:id="colServico" prefWidth="180"/>
+            <TableColumn text="Profissional" fx:id="colProfissional" prefWidth="150"/>
+            <TableColumn text="Data" fx:id="colData" prefWidth="110"/>
+            <TableColumn text="Horário" fx:id="colHorario" prefWidth="100"/>
+            <TableColumn text="Ações" fx:id="colAcoes" prefWidth="120"/>
+        </columns>
+    </TableView>
+
+</VBox>

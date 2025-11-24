@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/20"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.EditarReservaController"
+      spacing="10">
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <Label text="Editar Reserva" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <TextField fx:id="txtCliente" promptText="Nome do Cliente"/>
+    <TextField fx:id="txtServico" promptText="Serviço"/>
+    <TextField fx:id="txtProfissional" promptText="Profissional"/>
+    <TextField fx:id="txtData" promptText="Data (ex: 12/11/2025)"/>
+    <TextField fx:id="txtHorario" promptText="Horário (ex: 14:00)"/>
+
+    <HBox spacing="10">
+        <Button fx:id="btnSalvarAlter" text="Salvar Alterações" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+        <Button fx:id="btnCancelar" text="Cancelar"/>
+    </HBox>
+</VBox>

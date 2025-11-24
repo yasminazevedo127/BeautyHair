@@ -1,0 +1,36 @@
+.background {
+    -fx-background-color: #ffffff;
+}
+
+.titulo {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.text-field, .date-picker {
+    -fx-background-radius: 8;
+    -fx-padding: 6;
+}
+
+.botao-salvar {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+}
+
+.botao-salvar:hover {
+    -fx-background-color: #45a049;
+}
+
+.botao-cancelar {
+    -fx-background-color: #f44336;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+}
+
+.botao-cancelar:hover {
+    -fx-background-color: #d32f2f;
+}
