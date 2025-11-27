@@ -4,6 +4,7 @@
     -fx-background-color: #FFF8FB;
 }
 
+/* Top Bar */
 .top-bar {
     -fx-background-color: linear-gradient(to bottom, #FFEAF2, #FFE0ED);
     -fx-padding: 12;
@@ -15,6 +16,20 @@
     -fx-font-size: 20px;
     -fx-text-fill: #8B2E56;
     -fx-font-weight: bold;
+}
+
+.form-label {
+    -fx-text-fill: #8B2E56;
+    -fx-font-weight: bold;
+}
+
+.form-field {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #EEC7D7;
+    -fx-padding: 6 8;
+    -fx-pref-width: 100%;
+    -fx-max-width: Infinity;
 }
 
 .button-primary {
@@ -40,6 +55,10 @@
     -fx-border-radius: 8;
 }
 
+.table-view .column-header-background {
+    -fx-background-color: #FFE5F0;
+}
+
 .action-button {
     -fx-background-color: transparent;
     -fx-padding: 4 8;
@@ -47,87 +66,24 @@
     -fx-cursor: hand;
 }
 
-.action-button.edit {
-    -fx-background-color: #EAF7EE;
-    -fx-text-fill: #2E8B57;
-}
-
 .action-button.edit:hover {
-    -fx-background-color: #D5F0D9;
-}
-
-.action-button.delete {
-    -fx-background-color: #FDEEEF;
-    -fx-text-fill: #C0392B;
+    -fx-background-color: #EAF7EE;
 }
 
 .action-button.delete:hover {
     -fx-background-color: #FBD6D9;
 }
 
-
-.form-container {
-    -fx-background-color: #FFFFFF;
-    -fx-padding: 25;
-    -fx-spacing: 18;
-    -fx-background-radius: 10;
-    -fx-border-color: #F0D9E6;
-    -fx-border-radius: 10;
-    -fx-effect: dropshadow(gaussian, rgba(240, 217, 230, 0.4), 8, 0, 0, 2);
-}
-
-.form-title {
-    -fx-font-size: 24px;
+.button-add {
+    -fx-background-color: #ff69b4;
+    -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-text-fill: #8B2E56;
-    -fx-padding: 0 0 12 0;
+    -fx-font-size: 16px;
+    -fx-padding: 0 10;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
 }
 
-.form-label {
-    -fx-font-size: 14px;
-    -fx-text-fill: #8B2E56;
-    -fx-font-weight: bold;
-}
-
-.form-field {
-    -fx-background-color: white;
-    -fx-border-color: #EFBFD0;
-    -fx-border-radius: 6;
-    -fx-background-radius: 6;
-    -fx-padding: 6 10;
-    -fx-font-size: 14px;
-}
-
-.form-field:focused {
-    -fx-border-color: #D88CA9;
-    -fx-effect: dropshadow(gaussian, rgba(216, 140, 169, 0.4), 6, 0, 0, 0);
-}
-
-.button-bar {
-    -fx-spacing: 12;
-    -fx-padding: 12 0 0 0;
-    -fx-alignment: center-right;
-}
-
-.button-save {
-    -fx-background-color: #F6CFE0;
-    -fx-text-fill: #8B2E56;
-    -fx-font-weight: bold;
-    -fx-padding: 8 20;
-    -fx-background-radius: 8;
-}
-
-.button-save:hover {
-    -fx-background-color: #F2BDD7;
-}
-
-.button-cancel {
-    -fx-background-color: #FDEEEF;
-    -fx-text-fill: #8B2E56;
-    -fx-padding: 8 20;
-    -fx-background-radius: 8;
-}
-
-.button-cancel:hover {
-    -fx-background-color: #FBDDE4;
+.button-add:hover {
+    -fx-background-color: #ff1493;
 }

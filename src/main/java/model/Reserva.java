@@ -1,84 +1,39 @@
 package model;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-
 public class Reserva {
 
     private static int contadorId = 1;
 
     private int id;
+    private String cliente;
+    private String servico;
+    private String data;
+    private String horario;
 
-    private final StringProperty cliente = new SimpleStringProperty();
-    private final StringProperty servico = new SimpleStringProperty();
-    private final StringProperty data = new SimpleStringProperty();
-    private final StringProperty horario = new SimpleStringProperty();
-
-    public Reserva() {
-        this.id = contadorId++;
-    }
+    public Reserva() {} 
 
     public Reserva(String cliente, String servico, String data, String horario) {
         this.id = contadorId++;
-        this.cliente.set(cliente);
-        this.servico.set(servico);
-        this.data.set(data);
-        this.horario.set(horario);
+        this.cliente = cliente;
+        this.servico = servico;
+        this.data = data;
+        this.horario = horario;
     }
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public static void setProximoId(int novoId) {
-        contadorId = novoId;
-    }
+    public String getCliente() { return cliente; }
+    public void setCliente(String cliente) { this.cliente = cliente; }
 
-    public String getCliente() {
-        return cliente.get();
-    }
+    public String getServico() { return servico; }
+    public void setServico(String servico) { this.servico = servico; }
 
-    public void setCliente(String cliente) {
-        this.cliente.set(cliente);
-    }
+    public String getData() { return data; }
+    public void setData(String data) { this.data = data; }
 
-    public StringProperty clienteProperty() {
-        return cliente;
-    }
+    public String getHorario() { return horario; }
+    public void setHorario(String horario) { this.horario = horario; }
 
-    public String getServico() {
-        return servico.get();
-    }
-
-    public void setServico(String servico) {
-        this.servico.set(servico);
-    }
-
-    public StringProperty servicoProperty() {
-        return servico;
-    }
-
-    public String getData() {
-        return data.get();
-    }
-
-    public void setData(String data) {
-        this.data.set(data);
-    }
-
-    public StringProperty dataProperty() {
-        return data;
-    }
-
-    public String getHorario() {
-        return horario.get();
-    }
-
-    public void setHorario(String horario) {
-        this.horario.set(horario);
-    }
-
-    public StringProperty horarioProperty() {
-        return horario;
-    }
+    public static void setProximoId(int novoId) { contadorId = novoId; }
 }

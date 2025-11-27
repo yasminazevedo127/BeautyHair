@@ -2,54 +2,60 @@ package control;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.Reserva;
 import repository.ReservaRepository;
+import repository.ServicosRepository;
 
 public class EditarReservaController {
 
     @FXML private TextField txtCliente;
-    @FXML private TextField txtServico;
-    @FXML private TextField txtProfissional;
+    @FXML private ComboBox<String> comboServico;
     @FXML private TextField txtData;
     @FXML private TextField txtHorario;
-
-    @FXML private Button btnSalvar;
     @FXML private Button btnCancelar;
+    @FXML private Button btnSalvar;
 
-    private int index;
-    private ReservaRepository repository;
+    private Reserva reservaSelecionada;
 
-    public void setDados(Reserva reserva, int index, ReservaRepository repo) {
-        this.index = index;
-        this.repository = repo;
+    private final ReservaRepository repo = ReservaRepository.getInstance();
+    private final ServicosRepository servicoRepo = ServicosRepository.getInstance();
 
-        txtCliente.setText(reserva.getCliente());
-        txtServico.setText(reserva.getServico());
-        txtData.setText(reserva.getData());
-        txtHorario.setText(reserva.getHorario());
+    @FXML
+    public void initialize() {
+        comboServico.getItems().addAll(servicoRepo.getAll());
+    }
+
+    public void setReserva(Reserva r) {
+        this.reservaSelecionada = r;
+
+        txtCliente.setText(r.getCliente());
+        comboServico.setValue(r.getServico());
+        txtData.setText(r.getData());
+        txtHorario.setText(r.getHorario());
     }
 
     @FXML
-    private void initialize() {
-        btnCancelar.setOnAction(e -> fechar());
-
-        btnSalvar.setOnAction(e -> {
-            Reserva nova = new Reserva(
+    private void onSalvar() {
+        Reserva editada = new Reserva(
                 txtCliente.getText(),
-                txtServico.getText(),
+                comboServico.getValue(),
                 txtData.getText(),
                 txtHorario.getText()
-            );
+        );
+        repo.update(reservaSelecionada.getId(), editada);
+        fechar();
+    }
 
-            repository.update(index, nova);
-            fechar();
-        });
+    @FXML
+    private void onCancelar() {
+        fechar();
     }
 
     private void fechar() {
-        Stage stage = (Stage) btnCancelar.getScene().getWindow();
+        Stage stage = (Stage) txtCliente.getScene().getWindow();
         stage.close();
     }
 }

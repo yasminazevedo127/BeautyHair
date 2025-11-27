@@ -4,10 +4,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/21" 
+<VBox xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="control.EditarReservaController"
-      spacing="12" stylesheets="@style.css" styleClass="root" prefWidth="420">
+      fx:controller="control.CadastrarReservaController"
+      spacing="12" styleClass="root" stylesheets="@style.css" prefWidth="420">
 
 
     <VBox spacing="10">
@@ -18,12 +18,12 @@
         <Label text="Nome do Cliente" styleClass="form-label"/>
         <TextField fx:id="txtCliente" styleClass="form-field"/>
 
-        <Label text="Serviço" styleClass="form-label"/>
+		<Label text="Serviço" styleClass="form-label"/>
 		<ComboBox fx:id="comboServico"
-                  promptText="Selecione um serviço"
+          		  promptText="Selecione um serviço"
           		  maxWidth="Infinity"
-          		  prefHeight="32"
-          		  styleClass="form-field"/>
+                  prefHeight="32"
+                  styleClass="form-field"/>
 
         <Label text="Data" styleClass="form-label"/>
         <TextField fx:id="txtData" styleClass="form-field"/>
@@ -33,14 +33,15 @@
 
         <HBox spacing="12" alignment="CENTER_RIGHT" styleClass="button-bar">
             <padding>
-                <Insets top="10" right="0" bottom="0" left="0"/>
+                <Insets top="10"/>
             </padding>
 
-            <Button fx:id="btnCancelar" text="Cancelar" 
+            <Button fx:id="btnCancelar" text="Cancelar"
                     styleClass="button-secondary" onAction="#onCancelar"/>
 
-            <Button fx:id="btnSalvar" text="Salvar" 
+            <Button fx:id="btnSalvar" text="Salvar"
                     styleClass="button-primary" onAction="#onSalvar"/>
         </HBox>
     </VBox>
+
 </VBox>

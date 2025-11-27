@@ -1,142 +1,170 @@
 package control;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.shape.SVGPath;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import model.Reserva;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import model.ReservaFX;
 import repository.ReservaRepository;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 public class MainViewController {
 
-    @FXML private TableView<Reserva> tableReservas;
+    @FXML private BorderPane root;
+    @FXML private TableView<ReservaFX> tabela;
+    @FXML private TableColumn<ReservaFX, String> colCliente;
+    @FXML private TableColumn<ReservaFX, String> colServico;
+    @FXML private TableColumn<ReservaFX, String> colData;
+    @FXML private TableColumn<ReservaFX, String> colHorario;
+    @FXML private TableColumn<ReservaFX, Void> colAcoes;
 
-    @FXML private TableColumn<Reserva, String> colNome;
-    @FXML private TableColumn<Reserva, String> colServico;
-    @FXML private TableColumn<Reserva, String> colData;
-    @FXML private TableColumn<Reserva, String> colHorario;
-    @FXML private TableColumn<Reserva, Void> colAcoes;
-
-    @FXML private Button btnNovaReserva;
     @FXML private TextField txtPesquisar;
     @FXML private Button btnPesquisar;
     @FXML private Button btnAtualizar;
+    @FXML private Button btnNovaReserva;
+    @FXML private Button btnGerenciarServicos;
 
-    private final ReservaRepository repository = new ReservaRepository();
-    private ObservableList<Reserva> listaOriginal;
+    private final ReservaRepository repo = ReservaRepository.getInstance();
 
     @FXML
     public void initialize() {
+        colCliente.setCellValueFactory(cell -> cell.getValue().clienteProperty());
+        colServico.setCellValueFactory(cell -> cell.getValue().servicoProperty());
+        colData.setCellValueFactory(cell -> cell.getValue().dataProperty());
+        colHorario.setCellValueFactory(cell -> cell.getValue().horarioProperty());
 
-        colNome.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(d.getValue().getCliente()));
-        colServico.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(d.getValue().getServico()));
-        colData.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(d.getValue().getData()));
-        colHorario.setCellValueFactory(d -> new javafx.beans.property.SimpleStringProperty(d.getValue().getHorario()));
-
+        configurarAcoes();
         carregarTabela();
-        configurarColunaAcoes();
-
-        btnNovaReserva.setOnAction(e -> novaReserva());
-        btnPesquisar.setOnAction(e -> pesquisar());
-        txtPesquisar.textProperty().addListener((obs, o, n) -> pesquisar());
-        btnAtualizar.setOnAction(e -> carregarTabela());
     }
 
-    
+    @FXML
+    public void abrirCadastrar() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/CadastrarReserva.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Cadastrar Reserva");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(tabela.getScene().getWindow());
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            carregarTabela();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void atualizarTabela() {
+        carregarTabela();
+    }
+
+    @FXML
+    public void pesquisar() {
+        String termo = txtPesquisar.getText();
+        List<ReservaFX> fxList = repo.search(termo).stream()
+            .map(ReservaFX::fromReserva)
+            .toList();
+        tabela.getItems().setAll(fxList);
+    }
+
+
+
     private void carregarTabela() {
-        listaOriginal = FXCollections.observableArrayList(repository.getAll());
-        tableReservas.setItems(listaOriginal);
+        List<ReservaFX> fxList = repo.getAll().stream()
+            .map(ReservaFX::fromReserva)
+            .toList();
+        tabela.getItems().setAll(fxList);
     }
 
-    
-    private void configurarColunaAcoes() {
 
+    private void configurarAcoes() {
         colAcoes.setCellFactory(col -> new TableCell<>() {
-
-            private final HBox container = new HBox(8);
-
-            private final Button btnEditar = criarBotaoSVG(
-                    "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z "
-                  + "M20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0"
-                  + "l-1.83 1.83 3.75 3.75 1.84-1.82z",
-                    "#ff69b4"
-            );
-
-            private final Button btnExcluir = criarBotaoSVG(
-                    "M6 6l12 12M18 6L6 18",
-                    "red"
-            );
+            private final Button btnEditar = new Button("✎");
+            private final Button btnExcluir = new Button("✖");
+            private final HBox box = new HBox(6, btnEditar, btnExcluir);
 
             {
-                container.getChildren().addAll(btnEditar, btnExcluir);
+                btnEditar.getStyleClass().add("action-button");
+                btnExcluir.getStyleClass().add("action-button");
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-
                 if (empty) {
                     setGraphic(null);
                     return;
                 }
 
-                Reserva reserva = tableReservas.getItems().get(getIndex());
+                ReservaFX rfx = getTableView().getItems().get(getIndex());
 
-                btnEditar.setOnAction(e -> editarReserva(reserva));
-                btnExcluir.setOnAction(e -> excluirReserva(reserva));
+                btnEditar.setOnAction(e -> abrirEditar(rfx));
+                btnExcluir.setOnAction(e -> {
+                    Alert a = new Alert(Alert.AlertType.CONFIRMATION,
+                            "Remover reserva de " + rfx.getCliente() + "?",
+                            ButtonType.YES, ButtonType.NO);
+                    a.initOwner(tabela.getScene().getWindow());
+                    Optional<ButtonType> resp = a.showAndWait();
+                    if (resp.isPresent() && resp.get() == ButtonType.YES) {
+                        repo.removeById(rfx.getId());
+                        carregarTabela();
+                    }
+                });
 
-                setGraphic(container);
+                setGraphic(box);
             }
         });
     }
 
-    private Button criarBotaoSVG(String path, String color) {
-        SVGPath svg = new SVGPath();
-        svg.setContent(path);
-        svg.setStyle("-fx-fill: " + color + "; -fx-scale-x: 0.7; -fx-scale-y: 0.7;");
 
-        Button b = new Button();
-        b.setStyle("-fx-background-color: transparent;");
-        b.setGraphic(svg);
-        return b;
-    }
+	private void abrirEditar(ReservaFX rfx) {
+	    try {
+	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EditarReserva.fxml"));
+	        Parent root = loader.load();
+	        EditarReservaController ctrl = loader.getController();
+	
+	        ctrl.setReserva(rfx.toReserva());
+	
+	        Stage stage = new Stage();
+	        stage.setTitle("Editar Reserva");
+	        stage.initModality(Modality.APPLICATION_MODAL);
+	        stage.initOwner(tabela.getScene().getWindow());
+	        stage.setScene(new Scene(root));
+	        stage.showAndWait();
+	
+	        carregarTabela();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	@FXML
+	private void abrirGerenciarServicos() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Servico.fxml"));
+	        Parent root = loader.load();
 
-    
-    private void novaReserva() {}
+	        Stage stage = new Stage();
+	        stage.setTitle("Gerenciar Serviços");
+	        stage.initModality(Modality.APPLICATION_MODAL);
+	        stage.initOwner(tabela.getScene().getWindow());
+	        stage.setScene(new Scene(root));
+	        stage.setMinWidth(350);
+	        stage.setMinHeight(400);
+	        stage.showAndWait();
 
-    private void pesquisar() {
-        String termo = txtPesquisar.getText().toLowerCase();
-
-        if (termo.isBlank()) {
-            tableReservas.setItems(listaOriginal);
-            return;
-        }
-
-        ObservableList<Reserva> filtrada = FXCollections.observableArrayList();
-
-        for (Reserva r : listaOriginal) {
-            if (containsIgnoreCase(r.getCliente(), termo) ||
-                containsIgnoreCase(r.getServico(), termo) ||
-                containsIgnoreCase(r.getData(), termo) ||
-                containsIgnoreCase(r.getHorario(), termo)) {
-
-                filtrada.add(r);
-            }
-        }
-
-        tableReservas.setItems(filtrada);
-    }
-
-    private boolean containsIgnoreCase(String value, String termo) {
-        return value != null && value.toLowerCase().contains(termo);
-    }
-
-    private void editarReserva(Reserva r) {}
-
-    private void excluirReserva(Reserva r) {
-        repository.removerPorId(r.getId());
-        carregarTabela();
-    }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
 }

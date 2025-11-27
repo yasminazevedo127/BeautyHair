@@ -4,15 +4,19 @@
 /**
  * 
  */
-module BeutyHAir {
-	requires javafx.controls;
+module BeautyHair {
+	requires transitive javafx.base;
+    requires javafx.controls;
     requires javafx.fxml;
-
+    requires javafx.graphics;
     requires com.google.gson;
 
     opens control to javafx.fxml;
-    opens model to com.google.gson; 
-    opens view;
-    
-    exports application;
+    opens model to com.google.gson;
+    opens repository to com.google.gson;
+
+    exports control;
+    exports model;
+    exports repository;
+    exports application to javafx.graphics;
 }

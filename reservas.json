@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "cliente": "Maria da SIlva",
+    "servico": "Corte de Cabelo",
+    "data": "20/12/2025",
+    "horario": "11:30"
+  },
+  {
+    "id": 4,
+    "cliente": "Ana Julia  dos Santos",
+    "servico": "Escova",
+    "data": "21/12/2025",
+    "horario": "15:00"
+  }
+]

@@ -5,9 +5,9 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane fx:id="root" xmlns="http://javafx.com/javafx/17"
+<BorderPane fx:id="root" xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controller.MainViewController">
+            fx:controller="control.MainViewController">
 
     <top>
         <VBox spacing="10">
@@ -23,7 +23,7 @@
                     <Insets top="10" right="20" bottom="10" left="20"/>
                 </padding>
 
-                <Button fx:id="btnNovaReserva" text=" Nova Reserva" 
+                <Button fx:id="btnNovaReserva" text=" Nova Reserva" onAction="#abrirCadastrar" 
         				style="-fx-background-color: #ff69b4; -fx-text-fill: white;">
     				<graphic>
         				<SVGPath content="M7 12h10M12 7v10"
@@ -33,29 +33,26 @@
 
                 <Pane HBox.hgrow="ALWAYS"/>
                 
-                <TextField fx:id="txtPesquisar" promptText="Buscar reserva..." prefWidth="220"/>
+                <TextField fx:id="txtPesquisar" promptText="Buscar reserva..." prefWidth="300"/>
 
-                <Button fx:id="btnPesquisar" text="">
+                <Button fx:id="btnPesquisar" text="" onAction="#pesquisar">
         			<graphic>
             			<SVGPath content="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-1.41 1.41l.27.28v.79l5 5 1.5-1.5-5-5zM10 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
         			</graphic>
     			</Button>
+    			
+    			<Button fx:id="btnGerenciarServicos" text="Serviços" onAction="#abrirGerenciarServicos" prefHeight="28" minHeight="28" maxHeight="28">>
+        		</Button>
 
-                <Button fx:id="btnAtualizar" text="">
-    				<graphic>
-        				<SVGPath content="M4 4v5h.01M4 9a8 8 0 1 1 2.3 5.7M4 4l3 3"
-            					 style="-fx-stroke: black; -fx-fill: transparent; -fx-stroke-width: 2;"/>
-    				</graphic>
-				</Button>
             </HBox>
         </VBox>
     </top>
 
     <center>
-        <TableView fx:id="tableReservas">
+        <TableView fx:id="tabela">
             <columns>
 
-                <TableColumn fx:id="colNome" text="Nome do Cliente" prefWidth="180"/>
+                <TableColumn fx:id="colCliente" text="Nome do Cliente" prefWidth="180"/>
                 <TableColumn fx:id="colServico" text="Serviço" prefWidth="140"/>
                 <TableColumn fx:id="colData" text="Data" prefWidth="120"/>
                 <TableColumn fx:id="colHorario" text="Horário" prefWidth="100"/>
