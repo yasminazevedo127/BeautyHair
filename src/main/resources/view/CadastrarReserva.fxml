@@ -24,12 +24,30 @@
           		  maxWidth="Infinity"
                   prefHeight="32"
                   styleClass="form-field"/>
+                  
+        <Label text="Profissional"/>
+            <ComboBox fx:id="comboProfissional" 
+            		  promptText="Selecione um profissional"
+            		  maxWidth="Infinity"
+          		  	  prefHeight="32"
+          		  	  styleClass="form-field"/>
 
         <Label text="Data" styleClass="form-label"/>
-        <TextField fx:id="txtData" styleClass="form-field"/>
+		<DatePicker fx:id="dateData" promptText="Data" styleClass="form-field"/>
 
-        <Label text="Horário" styleClass="form-label"/>
-        <TextField fx:id="txtHorario" styleClass="form-field"/>
+		<Label text="Horário" styleClass="form-label"/>
+    	<ComboBox fx:id="comboHorario" 
+    			  promptText="Selecione um horário" 
+    			  maxWidth="Infinity"
+                  prefHeight="32"
+                  styleClass="form-field"/>
+        
+        <Label text="Status" styleClass="form-label"/>
+        <ComboBox fx:id="comboStatus"
+                  promptText="Selecione o status"
+                  maxWidth="Infinity"
+                  prefHeight="32"
+                  styleClass="form-field"/>
 
         <HBox spacing="12" alignment="CENTER_RIGHT" styleClass="button-bar">
             <padding>

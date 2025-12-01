@@ -6,20 +6,20 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="control.ServicoController"
+            fx:controller="control.ProfissionaisController"
             styleClass="root" stylesheets="@style.css">
 
     <top>
         <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 15;">
-            <Label text="Serviços" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
-            <Pane HBox.hgrow="ALWAYS"/> 
+            <Label text="Profissionais" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+            <Pane HBox.hgrow="ALWAYS"/>
             <Button fx:id="btnAdicionar" text="+ Adicionar" styleClass="button-primary"/>
         </HBox>
     </top>
 
     <center>
         <VBox spacing="10" style="-fx-padding: 15;">
-            <ListView fx:id="listaServicos" prefHeight="400"/>
+            <ListView fx:id="listaProfissionais" prefHeight="400"/>
         </VBox>
     </center>
 

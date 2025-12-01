@@ -1,5 +1,9 @@
 package model;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 public class Reserva {
 
     private static int contadorId = 1;
@@ -7,15 +11,19 @@ public class Reserva {
     private int id;
     private String cliente;
     private String servico;
+    private String profissional;
     private String data;
     private String horario;
+    private String status;
 
     public Reserva() {} 
 
-    public Reserva(String cliente, String servico, String data, String horario) {
+    public Reserva(String cliente, String servico, String profissional, String data, String horario, String status) {
         this.id = contadorId++;
         this.cliente = cliente;
+        this.profissional = profissional;
         this.servico = servico;
+        this.status = status;
         this.data = data;
         this.horario = horario;
     }
@@ -28,12 +36,52 @@ public class Reserva {
 
     public String getServico() { return servico; }
     public void setServico(String servico) { this.servico = servico; }
+    
+    public String getProfissional() { return profissional; }
+    public void setProfissional(String profissional) { this.profissional = profissional; }
 
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    
     public String getData() { return data; }
     public void setData(String data) { this.data = data; }
 
     public String getHorario() { return horario; }
     public void setHorario(String horario) { this.horario = horario; }
-
+    
     public static void setProximoId(int novoId) { contadorId = novoId; }
+    
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
+
+    public LocalDate getDataAsLocalDate() {
+        if (data== null || data.isBlank()) return null;
+        return LocalDate.parse(data, DATE_FMT);
+    }
+
+    public LocalTime getHorarioAsLocalTime() {
+        if (horario == null || horario.isBlank()) return null;
+        return LocalTime.parse(horario, TIME_FMT);
+    }
+    
+    public boolean conflitaCom(Reserva outra) {
+        if (outra == null) return false;
+        return this.profissional.equals(outra.profissional) &&
+               this.getDataAsLocalDate().equals(outra.getDataAsLocalDate()) &&
+               this.getHorarioAsLocalTime().equals(outra.getHorarioAsLocalTime());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Reserva reserva = (Reserva) o;
+        return id == reserva.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
 }

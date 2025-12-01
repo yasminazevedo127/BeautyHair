@@ -8,8 +8,11 @@ import model.Reserva;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ReservaRepository {
 
@@ -56,6 +59,7 @@ public class ReservaRepository {
         for (Reserva r : lista) {
             if ((r.getCliente() != null && r.getCliente().toLowerCase().contains(termo)) ||
                 (r.getServico() != null && r.getServico().toLowerCase().contains(termo)) ||
+                (r.getProfissional() != null && r.getProfissional().toLowerCase().contains(termo)) ||
                 (r.getData() != null && r.getData().toLowerCase().contains(termo)) ||
                 (r.getHorario() != null && r.getHorario().toLowerCase().contains(termo))) {
                 out.add(r);
@@ -83,5 +87,16 @@ public class ReservaRepository {
         } catch (Exception e) {
             System.out.println("Arquivo JSON não encontrado ou vazio.");
         }
+    }
+    
+    public boolean existeReserva(LocalDate data, LocalTime hora) {
+        if (data == null || hora == null) return false;
+        Optional<Reserva> existe = lista.stream()
+                .filter(r -> {
+                    if (r.getDataAsLocalDate() == null || r.getHorarioAsLocalTime() == null) return false;
+                    return r.getDataAsLocalDate().equals(data) && r.getHorarioAsLocalTime().equals(hora);
+                })
+                .findAny();
+        return existe.isPresent();
     }
 }

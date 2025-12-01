@@ -8,18 +8,21 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox spacing="12" alignment="CENTER" xmlns="http://javafx.com/javafx/21"
-	  prefWidth="300"
+      prefWidth="300"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="control.AdicionarServicoController"
+      fx:controller="control.AdicionarItemController"
       styleClass="root" stylesheets="@style.css">
 
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
-    <Label text="Adicionar Serviço" styleClass="form-label"/>
+    <Label fx:id="lblTitulo" text="Adicionar" styleClass="form-label"/>
 
-    <TextField fx:id="txtNome" promptText="Nome do serviço" prefWidth="250" styleClass="form-field"/>
+    <TextField fx:id="txtNome"
+               promptText="Nome"
+               prefWidth="250"
+               styleClass="form-field"/>
 
     <HBox spacing="10">
         <Button text="Salvar" onAction="#salvar" styleClass="button-primary"/>

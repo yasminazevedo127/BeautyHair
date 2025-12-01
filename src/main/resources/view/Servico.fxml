@@ -13,7 +13,7 @@
         <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 15;">
             <Label text="Serviços" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
             <Pane HBox.hgrow="ALWAYS"/> 
-            <Button fx:id="btnAdicionarServico" text="+ Adicionar" styleClass="button-primary"/>
+            <Button fx:id="btnAdicionar" text="+ Adicionar" styleClass="button-primary"/>
         </HBox>
     </top>
 

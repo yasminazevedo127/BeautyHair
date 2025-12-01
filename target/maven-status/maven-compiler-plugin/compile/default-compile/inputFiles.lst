@@ -1,11 +1,13 @@
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/application/Main.java
-/Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/AdicionarServicoController.java
+/Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/AdicionarItemController.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/CadastrarReservaController.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/EditarReservaController.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/MainViewController.java
+/Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/ProfissionaisController.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/ServicoController.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/model/Reserva.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/model/ReservaFX.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/module-info.java
+/Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/repository/ProfissionaisRepository.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/repository/ReservaRepository.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/repository/ServicosRepository.java
