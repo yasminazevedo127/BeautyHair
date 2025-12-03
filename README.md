@@ -8,11 +8,20 @@ O projeto **BeautyHair** é uma aplicação desktop desenvolvida em **JavaFX** p
 
 A arquitetura do projeto segue rigorosamente o padrão **MVC (Model-View-Controller)**, utilizando **Singletons** para acesso a dados e **JSON** para persistência em disco.
 
-[Image of MVC architectural pattern diagram]
+-----
+2. Tecnologias e Dependências 🛠️
+O projeto utiliza as seguintes tecnologias:
+
+Java SDK: 21
+
+JavaFX: 21
+
+Maven: Gerenciamento de dependências.
+
+Gson: Biblioteca para persistência de dados em JSON.
 
 -----
-
-## 2\. Estrutura do Projeto
+## 3\. Estrutura do Projeto
 
 O código-fonte é organizado nos seguintes pacotes:
 
@@ -26,7 +35,7 @@ O código-fonte é organizado nos seguintes pacotes:
 
 -----
 
-## 3\. Ponto de Entrada (`application.Main`)
+## 4\. Ponto de Entrada (`application.Main`)
 
 A classe `application.Main` é o ponto de partida do aplicativo.
 
@@ -51,7 +60,7 @@ public void start(Stage stage) throws Exception {
 
 -----
 
-## 4\. Camada de Modelo (`model`)
+## 5\. Camada de Modelo (`model`)
 
 Gerencia a representação e as regras de agendamento.
 
@@ -60,7 +69,7 @@ Gerencia a representação e as regras de agendamento.
 
 -----
 
-## 5\. Camada de Repositório (`repository`)
+## 6\. Camada de Repositório (`repository`)
 
 Responsável por todas as operações de I/O, utilizando arquivos JSON na raiz do projeto (`reservas.json`, `profissionais.json`, `servicos.json`).
 
@@ -69,21 +78,32 @@ Responsável por todas as operações de I/O, utilizando arquivos JSON na raiz d
 
 -----
 
-## 6\. Camada de Controle (`control`)
+## 7\. Camada de Controle (`control`)
 
-Coordena a aplicação, sendo o ponto de contato entre a UI e os dados.
+O pacote `control` contém a lógica de interface, validação e orquestração do fluxo de trabalho, atuando como o intermediário entre a View (FXML) e o Modelo/Repositório.
 
-| Controlador | Funcionalidade Principal | Destaque |
+| Controlador | Responsabilidade Primária | Funcionalidades Chave |
 | :--- | :--- | :--- |
-| `MainViewController` | Gerencia a tabela principal de reservas. | Força o crescimento vertical dos botões e implementa ações de **Editar** / **Excluir** na tabela. |
-| `CadastrarReservaController` | Criação de novas reservas. | **Validação rigorosa** de campos, data/hora e **checa conflito** de profissional antes de salvar. |
-| `EditarReservaController` | Edição de reservas. | **Bloqueia campos** de agendamento (data, horário) se a reserva já tiver passado, permitindo apenas a alteração do **Status**. |
-| `ServicoController` / `ProfissionaisController` | Gerenciamento de listas. | Usa **ListView** com botão de remoção na célula e integra o diálogo genérico `AdicionarItemController`. |
-| `AdicionarItemController` | Diálogo genérico Salvar/Cancelar. | Usa **Programação Funcional** (`Consumer<String>`) para retornar o valor salvo ao controlador que o chamou. |
+| **`MainViewController`** | Gerenciamento da Visão Geral e Navegação. | Exibe a lista de agendamentos do **Dia Atual** por padrão. Permite **Busca** (`search`) e **Ações** de Editar/Excluir na tabela. |
+| **`CadastrarReservaController`** | Criação de Novos Agendamentos. | **Validação de Campos** (obrigatórios, data/hora no futuro) e **Checagem de Conflito** (Garante exclusividade de horário/data por profissional). |
+| **`EditarReservaController`** | Modificação de Agendamentos. | **Bloqueio Seletivo de Campos:** Para reservas passadas, apenas o campo **Status** fica editável, impedindo alterações acidentais de data/hora. |
+| **`ServicoController` / `ProfissionaisController`** | Gerenciamento de Catálogos. | Exibe e gerencia as listas de itens, utilizando `ListView` com botões de remoção. |
+| **`AdicionarItemController`** | Diálogo de Inclusão Genérico. | Controlador reutilizável que utiliza uma **Interface Funcional (`Consumer<String>`)** para adicionar itens (Serviço ou Profissional) de volta ao controlador chamador. |
+
+---
+
+### Detalhamento do Fluxo de Agendamento
+
+A validação de conflito de horário é uma regra crítica de negócio implementada através da interação entre o `CadastrarReservaController` e o objeto `Reserva` (método `conflitaCom`), garantindo a integridade dos agendamentos:
+
+1.  O **Controller** coleta os dados (profissional, data, hora).
+2.  Cria um objeto `Reserva` temporário.
+3.  Consulta o **`ReservaRepository`** para verificar se *alguma* reserva existente **conflita** com o objeto temporário.
+4.  Somente se não houver conflito, o **Controller** chama `repo.add()` para persistir a nova reserva.
 
 -----
 
-## 7\. Instruções de Execução
+## 8\. Instruções de Execução
 
 1.  **Pré-requisitos:** Java Development Kit (JDK) e Maven configurados.
 2.  **Compilar:** Navegue até o diretório raiz e compile:
