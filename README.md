@@ -1,7 +1,3 @@
-## README do Projeto BeautyHair
-
------
-
 ## 1\. Visão Geral e Objetivo
 
 O projeto **BeautyHair** é uma aplicação desktop desenvolvida em **JavaFX** para gerenciamento de um salão de beleza. O sistema oferece uma interface centralizada para agendamento, busca de reservas e administração de catálogos (Serviços e Profissionais).
@@ -9,16 +5,16 @@ O projeto **BeautyHair** é uma aplicação desktop desenvolvida em **JavaFX** p
 A arquitetura do projeto segue rigorosamente o padrão **MVC (Model-View-Controller)**, utilizando **Singletons** para acesso a dados e **JSON** para persistência em disco.
 
 -----
-2. Tecnologias e Dependências 🛠️
+## 2\. Tecnologias e Dependências 
 O projeto utiliza as seguintes tecnologias:
 
-Java SDK: 21
+* Java SDK: 21
 
-JavaFX: 21
+* JavaFX: 21
 
-Maven: Gerenciamento de dependências.
+* Maven: Gerenciamento de dependências.
 
-Gson: Biblioteca para persistência de dados em JSON.
+* Gson: Biblioteca para persistência de dados em JSON.
 
 -----
 ## 3\. Estrutura do Projeto
