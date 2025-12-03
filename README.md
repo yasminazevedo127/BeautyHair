@@ -2,7 +2,7 @@
 
 O projeto **BeautyHair** é uma aplicação desktop desenvolvida em **JavaFX** para gerenciamento de um salão de beleza. O sistema oferece uma interface centralizada para agendamento, busca de reservas e administração de catálogos (Serviços e Profissionais).
 
-A arquitetura do projeto segue rigorosamente o padrão **MVC (Model-View-Controller)**, utilizando **Singletons** para acesso a dados e **JSON** para persistência em disco.
+A arquitetura do projeto segue o padrão **MVC (Model-View-Controller)**, utilizando **Singletons** para acesso a dados e **JSON** para persistência em disco.
 
 -----
 ## 2\. Tecnologias e Dependências 
