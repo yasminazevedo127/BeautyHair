@@ -36,11 +36,27 @@ public class ReservaRepository {
         salvarJson();
     }
 
-    public void update(int id, Reserva nova) {
-        for (int i = 0; i < lista.size(); i++) {
-            if (lista.get(i).getId() == id) {
-                nova.setId(id);
-                lista.set(i, nova);
+    public void update(int id, Reserva original) {
+        for (Reserva r : lista) {
+            if (r.getId() == id) {
+
+                r.setCliente(original.getCliente());
+                r.setServico(original.getServico());
+                r.setProfissional(original.getProfissional());
+                r.setStatus(original.getStatus());
+                r.setData(original.getData());
+                r.setHorario(original.getHorario());
+
+                salvarJson();
+                return;
+            }
+        }
+    }
+    
+    public void updateStatus(int id, String novoStatus) {
+        for (Reserva r : lista) {
+            if (r.getId() == id) {
+                r.setStatus(novoStatus);
                 salvarJson();
                 return;
             }

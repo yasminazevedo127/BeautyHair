@@ -1,26 +1,29 @@
 [
   {
     "id": 0,
-    "cliente": "Maria da Silva",
-    "servico": "Escova",
-    "profissional": "Mariana",
-    "data": "30/11/2025",
-    "horario": "09:30"
-  },
-  {
-    "id": 0,
-    "cliente": "Alicia Azevedo",
-    "servico": "Luzes",
+    "cliente": "Emily Beatriz",
+    "servico": "Corte",
     "profissional": "Jobson",
-    "data": "04/12/2025",
-    "horario": "10:30"
+    "data": "03/12/2025",
+    "horario": "15:00",
+    "status": "Agendado"
   },
   {
     "id": 0,
     "cliente": "Yasmin Maria",
     "servico": "Hidratação",
-    "profissional": "Mariana",
-    "data": "10/12/2025",
-    "horario": "11:30"
+    "profissional": "Felipe",
+    "data": "04/12/2025",
+    "horario": "08:30",
+    "status": "Agendado"
+  },
+  {
+    "id": 0,
+    "cliente": "Saulo Secundo",
+    "servico": "Escova",
+    "profissional": "Carla",
+    "data": "03/12/2025",
+    "horario": "15:30",
+    "status": "Agendado"
   }
 ]

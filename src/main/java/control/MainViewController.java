@@ -48,6 +48,10 @@ public class MainViewController {
 
     @FXML
     public void initialize() {
+    	btnNovaReserva.setMaxHeight(Double.MAX_VALUE);
+        btnGerenciarServicos.setMaxHeight(Double.MAX_VALUE);
+        btnGerenciarProfissionais.setMaxHeight(Double.MAX_VALUE);
+        
     	lblHoje.setText("Hoje • " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
     	
         colCliente.setCellValueFactory(cell -> cell.getValue().clienteProperty());

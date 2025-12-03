@@ -49,22 +49,16 @@ public class EditarReservaController {
     }
 
     public void setReserva(Reserva r) {
-        if (r == null) return;
-        
         this.reservaAtual = r;
 
         txtCliente.setText(r.getCliente());
         comboServico.setValue(r.getServico());
         comboProfissional.setValue(r.getProfissional());
         comboStatus.setValue(r.getStatus());
+        dateData.setValue(r.getDataAsLocalDate());
+        comboHorario.setValue(r.getHorarioAsLocalTime());
 
-        if (r.getDataAsLocalDate() != null) {
-            dateData.setValue(r.getDataAsLocalDate());
-        }
-
-        if (r.getHorarioAsLocalTime() != null) {
-            comboHorario.setValue(r.getHorarioAsLocalTime());
-        }
+        bloquearCamposSePassado();
     }
     
     private void configurarDatePicker() {
@@ -110,43 +104,46 @@ public class EditarReservaController {
 
     @FXML
     private void onSalvar() {
-        String cliente = txtCliente.getText().trim();
-        String servico = comboServico.getValue();
-        String profissional = comboProfissional.getValue();
+
         String status = comboStatus.getValue();
         LocalDate data = dateData.getValue();
         LocalTime horario = comboHorario.getValue();
+
+        LocalDate hoje = LocalDate.now();
+        LocalTime agora = LocalTime.now();
+
+        boolean reservaPassada =
+                data.isBefore(hoje) ||
+                (data.isEqual(hoje) && horario.isBefore(agora));
+
+        if (reservaPassada) {
+            repo.updateStatus(reservaAtual.getId(), status);
+            aviso("Status atualizado com sucesso!");
+            fechar();
+            return;
+        }
+
+        if (horario == null) {
+            aviso("Escolha um horário válido!");
+            return;
+        }
+
+        String cliente = txtCliente.getText().trim();
+        String servico = comboServico.getValue();
+        String profissional = comboProfissional.getValue();
 
         if (cliente.isEmpty()) {
             aviso("Campo 'Cliente' é obrigatório!");
             return;
         }
 
-        if (servico.isEmpty()) {
+        if (servico == null || servico.isBlank()) {
             aviso("Campo 'Serviço' é obrigatório!");
             return;
         }
-        
+
         if (profissional == null || profissional.isBlank()) {
             aviso("Escolha um profissional.");
-            return;
-        }
-
-        if (data == null) {
-            aviso("Escolha uma data válida!");
-            return;
-        }
-
-        if (!validarHorario(horario)) {
-            aviso("Escolha um horário válido!");
-            return;
-        }
-
-        LocalDate hoje = LocalDate.now();
-        LocalTime agora = LocalTime.now();
-
-        if (data.isBefore(hoje) || (data.isEqual(hoje) && horario.isBefore(agora))) {
-            aviso("A data e horário escolhidos já passaram!");
             return;
         }
 
@@ -156,24 +153,21 @@ public class EditarReservaController {
         reservaAtual.setStatus(status);
         reservaAtual.setData(data.format(DATE_FMT));
         reservaAtual.setHorario(horario.format(TIME_FMT));
-        
+
         if (repo.getAll().stream()
-                .anyMatch(res -> res.conflitaCom(reservaAtual))) {
+                .anyMatch(r -> r.conflitaCom(reservaAtual))) {
             aviso("Já existe reserva para este profissional neste horário!");
             return;
         }
 
-        repo.update(reservaAtual.getId(), reservaAtual); 
+        repo.update(reservaAtual.getId(), reservaAtual);
+        aviso("Reserva atualizada com sucesso!");
         fechar();
     }
     
     @FXML
     private void onCancelar() {
         fechar();
-    }
-
-    private boolean validarHorario(LocalTime horario) {
-        return horario != null;
     }
 
     private void aviso(String texto) {
@@ -185,5 +179,37 @@ public class EditarReservaController {
     private void fechar() {
         Stage stage = (Stage) txtCliente.getScene().getWindow();
         stage.close();
+    }
+    
+    private void bloquearCamposSePassado() {
+
+        LocalDate hoje = LocalDate.now();
+        LocalTime agora = LocalTime.now();
+
+        boolean passado =
+                reservaAtual.getDataAsLocalDate().isBefore(hoje) ||
+                (reservaAtual.getDataAsLocalDate().isEqual(hoje) &&
+                 reservaAtual.getHorarioAsLocalTime().isBefore(agora));
+
+        if (passado) {
+
+            txtCliente.setDisable(true);
+            comboServico.setDisable(true);
+            comboProfissional.setDisable(true);
+            dateData.setDisable(true);
+            comboHorario.setDisable(true);
+
+            comboStatus.setDisable(false);
+
+            btnSalvar.setDisable(false);
+            btnCancelar.setDisable(false);
+
+            String cinza = "-fx-opacity: 0.6;";
+            txtCliente.setStyle(cinza);
+            comboServico.setStyle(cinza);
+            comboProfissional.setStyle(cinza);
+            dateData.setStyle(cinza);
+            comboHorario.setStyle(cinza);
+        }
     }
 }
