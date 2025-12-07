@@ -9,7 +9,7 @@ A arquitetura do projeto segue o padrão **MVC (Model-View-Controller)**, utiliz
 
 -----
 
-## 2\. Tecnologias e Dependências ⚙️
+## 2\. Tecnologias e Dependências 
 
 O projeto foi construído utilizando as seguintes tecnologias e ferramentas:
 
@@ -20,7 +20,7 @@ O projeto foi construído utilizando as seguintes tecnologias e ferramentas:
 
 -----
 
-## 3\. Estrutura do Projeto 📂
+## 3\. Estrutura do Projeto 
 
 O código-fonte é organizado em pacotes que refletem a arquitetura MVC, garantindo a separação de responsabilidades:
 
@@ -85,7 +85,7 @@ O pacote **`services`** contém a classe **`ReservaValidator`**, que centraliza 
 
 -----
 
-## 7\. Camada de Controle (`control`) e Utilitários 🎛️
+## 7\. Camada de Controle (`control`) e Utilitários 
 
 O pacote `control` contém a lógica de interface, orquestração e classes de suporte que padronizam a experiência do usuário.
 
