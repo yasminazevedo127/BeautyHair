@@ -16,6 +16,7 @@ import repository.ReservaRepository;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,8 +81,6 @@ public class MainViewController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
-
-            // Controller do form
             Object controller = loader.getController();
             if (reservaFX != null && controller instanceof EditarReservaController editarCtrl) {
                 editarCtrl.setReserva(reservaFX.toReserva());
@@ -92,6 +91,7 @@ public class MainViewController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(tabela.getScene().getWindow());
             stage.setScene(new Scene(root));
+            stage.sizeToScene();
             stage.showAndWait();
 
             carregarTabela();
@@ -99,10 +99,29 @@ public class MainViewController {
             e.printStackTrace();
         }
     }
+    
+    private static final Comparator<ReservaFX> COMPARATOR_RESERVA_FX = (a, b) -> {
+        LocalDate da = a.getData();
+        LocalDate db = b.getData();
+        
+        if (da == null && db == null) return 0;
+        if (da == null) return 1;
+        if (db == null) return -1;
+        
+        int compData = da.compareTo(db);
+        if (compData != 0) return compData;
+        
+        return a.getHorario().compareTo(b.getHorario());
+    };
 
     @FXML
     public void atualizarTabela() {
     	carregarTabela();
+    }
+    
+    @FXML
+    private void mostrarTudo() {
+        carregarTabelaCompleta();
     }
 
     @FXML
@@ -111,18 +130,10 @@ public class MainViewController {
 
         List<ReservaFX> fxList = repo.search(termo).stream()
             .map(ReservaFX::fromReserva)
-            .sorted((a, b) -> {
-                int compData = a.getData().compareTo(b.getData());
-                return compData != 0 ? compData : a.getHorario().compareTo(b.getHorario());
-            })
+            .sorted(COMPARATOR_RESERVA_FX) 
             .toList();
 
         tabela.getItems().setAll(fxList);
-    }
-    
-    @FXML
-    private void mostrarTudo() {
-        carregarTabelaCompleta();
     }
 
     private void carregarTabela() {
@@ -131,10 +142,10 @@ public class MainViewController {
         List<ReservaFX> fxList = repo.getAll().stream()
             .filter(r -> {
                 LocalDate d = r.getDataAsLocalDate();
-                return d != null && d.equals(hoje);
+                return d != null && d.isEqual(hoje);
             })
-            .sorted((a, b) -> a.getHorarioAsLocalTime().compareTo(b.getHorarioAsLocalTime()))
-            .map(ReservaFX::fromReserva)
+            .map(ReservaFX::fromReserva) 
+            .sorted((a, b) -> a.getHorario().compareTo(b.getHorario())) 
             .toList();
 
         tabela.getItems().setAll(fxList);
@@ -142,20 +153,13 @@ public class MainViewController {
     
     private void carregarTabelaCompleta() {
         List<ReservaFX> fxList = repo.getAll().stream()
-            .sorted((a, b) -> {
-                LocalDate da = a.getDataAsLocalDate();
-                LocalDate db = b.getDataAsLocalDate();
-
-                int compData = da.compareTo(db);
-                if (compData != 0) return compData;
-
-                return a.getHorarioAsLocalTime().compareTo(b.getHorarioAsLocalTime());
-            })
             .map(ReservaFX::fromReserva)
+            .sorted(COMPARATOR_RESERVA_FX) 
             .toList();
 
         tabela.getItems().setAll(fxList);
-    } 
+    }
+    
 
     private void configurarAcoes() {
         colAcoes.setCellFactory(col -> new TableCell<>() {

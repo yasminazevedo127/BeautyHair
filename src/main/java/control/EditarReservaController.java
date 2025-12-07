@@ -1,20 +1,19 @@
 package control;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import model.Reserva;
+import repository.ProfissionaisRepository;
 import repository.ReservaRepository;
 import repository.ServicosRepository;
+import services.ReservaValidator;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class EditarReservaController {
+public class EditarReservaController extends ControleBase {
 
     @FXML private TextField txtCliente;
     @FXML private ComboBox<String> comboServico;
@@ -28,25 +27,30 @@ public class EditarReservaController {
 
     private final ReservaRepository repo = ReservaRepository.getInstance();
     private final ServicosRepository servRepo = ServicosRepository.getInstance();
-    private final ServicosRepository profRepo = ServicosRepository.getInstance();
-    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
-    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final ProfissionaisRepository profRepo = ProfissionaisRepository.getInstance();
+    
     private Reserva reservaAtual;
     
-    Locale localeBR = Locale.of("pt", "BR");
+    private final ReservaValidator validator = new ReservaValidator();
     
     @FXML
     public void initialize() {
         comboServico.getItems().setAll(servRepo.getAll());
         comboProfissional.getItems().setAll(profRepo.getAll());
-        comboStatus.getItems().setAll("Agendada", "Concluída", "Cancelada");
+        comboStatus.getItems().addAll(
+        	    "Agendada",
+        	    "Concluída",
+        	    "Cancelada",
+        	    "Não Compareceu"
+        	);
         
-        carregarHorarios();
-        configurarDatePicker();
+        JavaFXUtils.carregarHorarios(comboHorario);
+        JavaFXUtils.configurarDatePicker(dateData);
         
         btnSalvar.setOnAction(e -> onSalvar());
-        btnCancelar.setOnAction(e -> fechar());
+        btnCancelar.setOnAction(this::onCancelar);
     }
+    
 
     public void setReserva(Reserva r) {
         this.reservaAtual = r;
@@ -59,137 +63,81 @@ public class EditarReservaController {
         comboHorario.setValue(r.getHorarioAsLocalTime());
 
         bloquearCamposSePassado();
-    }
+    } 
     
-    private void configurarDatePicker() {
-        dateData.setPromptText("dd/MM/yyyy");
-        dateData.setConverter(new javafx.util.StringConverter<LocalDate>() {
-            @Override
-            public String toString(LocalDate date) {
-                return date != null ? DATE_FMT.format(date) : "";
-            }
-
-            @Override
-            public LocalDate fromString(String string) {
-                if (string == null || string.isBlank()) return null;
-                return LocalDate.parse(string, DATE_FMT);
-            }
-        });
-    }
-    
-    private void carregarHorarios() {
-        List<LocalTime> horarios = new ArrayList<>();
-        LocalTime inicio = LocalTime.of(8, 0);
-        LocalTime fim = LocalTime.of(18, 0);
-        while (!inicio.isAfter(fim)) {
-            horarios.add(inicio);
-            inicio = inicio.plusMinutes(30);
-        }
-        comboHorario.getItems().setAll(horarios);
-        comboHorario.setCellFactory(cb -> new ListCell<>() {
-            @Override
-            protected void updateItem(LocalTime item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? null : item.format(TIME_FMT));
-            }
-        });
-        comboHorario.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(LocalTime item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.format(TIME_FMT));
-            }
-        });
-    }
 
     @FXML
     private void onSalvar() {
-
-        String status = comboStatus.getValue();
         LocalDate data = dateData.getValue();
         LocalTime horario = comboHorario.getValue();
-
-        LocalDate hoje = LocalDate.now();
-        LocalTime agora = LocalTime.now();
-
-        boolean reservaPassada =
-                data.isBefore(hoje) ||
-                (data.isEqual(hoje) && horario.isBefore(agora));
-
-        if (reservaPassada) {
-            repo.updateStatus(reservaAtual.getId(), status);
-            aviso("Status atualizado com sucesso!");
-            fechar();
-            return;
+        
+        if (isReservaPassada(data, horario)) { 
+            atualizarStatus();
+        } else {
+            atualizarReservaCompleta(data, horario);
         }
+    }
+    
+    
+    private void atualizarStatus() {
+        String status = comboStatus.getValue();
+        this.reservaAtual.setStatus(status);
+        repo.update(reservaAtual.getId(), reservaAtual);
+        sucesso("Status atualizado com sucesso!");
+        fechar(btnSalvar);
+    }
+    
+    
+    private void atualizarReservaCompleta(LocalDate data, LocalTime horario) {
+        
+        reservaAtual.setCliente(txtCliente.getText().trim());
+        reservaAtual.setServico(comboServico.getValue());
+        reservaAtual.setProfissional(comboProfissional.getValue());
+        reservaAtual.setStatus(comboStatus.getValue());
+        
+        reservaAtual.setData(data != null ? data.format(JavaFXUtils.DATE_FMT) : null);
+        reservaAtual.setHorario(horario != null ? horario.format(JavaFXUtils.TIME_FMT) : null);
 
-        if (horario == null) {
-            aviso("Escolha um horário válido!");
-            return;
+        List<String> erros = validator.validar(reservaAtual); 
+
+        if (erros.isEmpty()) { 
+            if (validator.existeConflito(reservaAtual, reservaAtual.getId())) { 
+                erros.add("Já existe reserva para este profissional neste horário!");
+            }
         }
-
-        String cliente = txtCliente.getText().trim();
-        String servico = comboServico.getValue();
-        String profissional = comboProfissional.getValue();
-
-        if (cliente.isEmpty()) {
-            aviso("Campo 'Cliente' é obrigatório!");
-            return;
-        }
-
-        if (servico == null || servico.isBlank()) {
-            aviso("Campo 'Serviço' é obrigatório!");
-            return;
-        }
-
-        if (profissional == null || profissional.isBlank()) {
-            aviso("Escolha um profissional.");
-            return;
-        }
-
-        reservaAtual.setCliente(cliente);
-        reservaAtual.setServico(servico);
-        reservaAtual.setProfissional(profissional);
-        reservaAtual.setStatus(status);
-        reservaAtual.setData(data.format(DATE_FMT));
-        reservaAtual.setHorario(horario.format(TIME_FMT));
-
-        if (repo.getAll().stream()
-                .anyMatch(r -> r.conflitaCom(reservaAtual))) {
-            aviso("Já existe reserva para este profissional neste horário!");
-            return;
+        
+        if (!erros.isEmpty()) {
+            String mensagemErro = "Não foi possível atualizar a reserva devido aos seguintes erros:\n\n* " 
+                                + String.join("\n* ", erros);
+            erro(mensagemErro);
+            return; 
         }
 
         repo.update(reservaAtual.getId(), reservaAtual);
-        aviso("Reserva atualizada com sucesso!");
-        fechar();
+        sucesso("Reserva atualizada com sucesso!");
+        fechar(btnSalvar);
     }
     
+    
     @FXML
-    private void onCancelar() {
-        fechar();
+	protected void onCancelar(ActionEvent event) {
+        super.onCancelar(event); 
     }
-
-    private void aviso(String texto) {
-        Alert a = new Alert(Alert.AlertType.WARNING, texto, ButtonType.OK);
-        a.setHeaderText(null);
-        a.showAndWait();
-    }
-
-    private void fechar() {
-        Stage stage = (Stage) txtCliente.getScene().getWindow();
-        stage.close();
-    }
+    
     
     private void bloquearCamposSePassado() {
 
-        LocalDate hoje = LocalDate.now();
-        LocalTime agora = LocalTime.now();
-
-        boolean passado =
-                reservaAtual.getDataAsLocalDate().isBefore(hoje) ||
-                (reservaAtual.getDataAsLocalDate().isEqual(hoje) &&
-                 reservaAtual.getHorarioAsLocalTime().isBefore(agora));
+    	LocalDate dataReserva = reservaAtual.getDataAsLocalDate();
+        LocalTime horaReserva = reservaAtual.getHorarioAsLocalTime();
+        
+        boolean passado = false;
+        if (dataReserva != null && horaReserva != null) {
+            LocalDate hoje = LocalDate.now();
+            LocalTime agora = LocalTime.now();
+            
+            passado = dataReserva.isBefore(hoje) ||
+                      (dataReserva.isEqual(hoje) && horaReserva.isBefore(agora));
+        }
 
         if (passado) {
 
@@ -203,13 +151,19 @@ public class EditarReservaController {
 
             btnSalvar.setDisable(false);
             btnCancelar.setDisable(false);
-
-            String cinza = "-fx-opacity: 0.6;";
-            txtCliente.setStyle(cinza);
-            comboServico.setStyle(cinza);
-            comboProfissional.setStyle(cinza);
-            dateData.setStyle(cinza);
-            comboHorario.setStyle(cinza);
         }
+    }
+    
+    
+    private boolean isReservaPassada(LocalDate data, LocalTime horario) {
+        if (data == null || horario == null) {
+            return false;
+        }
+        
+        LocalDate hoje = LocalDate.now();
+        LocalTime agora = LocalTime.now();
+
+        return data.isBefore(hoje) || 
+               (data.isEqual(hoje) && horario.isBefore(agora));
     }
 }

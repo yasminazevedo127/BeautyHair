@@ -11,7 +11,10 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/view/MainView.fxml"));
         Scene scene = new Scene(root, 900, 600);
-        stage.setTitle("BeautyHair");
+        
+        String css = getClass().getResource("/view/style.css").toExternalForm();
+        scene.getStylesheets().add(css);
+        
         stage.setScene(scene);
         stage.show();
     }

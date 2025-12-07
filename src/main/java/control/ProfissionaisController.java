@@ -12,7 +12,7 @@ import repository.ProfissionaisRepository;
 
 import java.util.Optional;
 
-public class ProfissionaisController {
+public class ProfissionaisController extends ControleBase { 
 
     @FXML private ListView<String> listaProfissionais;
     @FXML private Button btnAdicionar;
@@ -45,15 +45,12 @@ public class ProfissionaisController {
                     setGraphic(hbox);
 
                     btnRemover.setOnAction(e -> {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                                "Remover profissional '" + item + "'?",
-                                ButtonType.YES, ButtonType.NO);
-                        alert.initOwner(getScene().getWindow());
-                        Optional<ButtonType> resp = alert.showAndWait();
+                        Optional<ButtonType> resp = ProfissionaisController.this.confirmacao("Remover profissional '" + item + "'?").showAndWait();
 
                         if (resp.isPresent() && resp.get() == ButtonType.YES) {
                             repo.remove(item);
                             carregarLista();
+                            ProfissionaisController.this.sucesso("Profissional removido com sucesso!");
                         }
                     });
                 }
@@ -71,23 +68,28 @@ public class ProfissionaisController {
             Parent root = loader.load();
 
             AdicionarItemController controller = loader.getController();
+            
             controller.configurar(
                     "Adicionar Profissional",
                     "Nome do profissional",
                     nome -> {
                         repo.add(nome);
                         carregarLista();
+                        sucesso("Profissional '" + nome + "' adicionado com sucesso!");
                     }
             );
 
             Stage stage = new Stage();
             stage.setTitle("Novo Profissional");
             stage.initModality(Modality.APPLICATION_MODAL);
+            // 💡 Define o dono do Stage (melhor UX)
+            stage.initOwner(listaProfissionais.getScene().getWindow()); 
             stage.setScene(new Scene(root));
             stage.showAndWait();
 
         } catch (Exception e) {
             e.printStackTrace();
+            erro("Não foi possível carregar o formulário de adição de profissional. Verifique o console.");
         }
     }
 }

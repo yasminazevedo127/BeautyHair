@@ -6,7 +6,7 @@
  */
 module BeautyHair {
 	requires transitive javafx.base;
-    requires javafx.controls;
+    requires transitive javafx.controls;
     requires javafx.fxml;
     requires transitive javafx.graphics;
     requires com.google.gson;

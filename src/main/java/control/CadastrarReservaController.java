@@ -1,20 +1,18 @@
 package control;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import repository.ProfissionaisRepository;
 import repository.ReservaRepository;
 import repository.ServicosRepository;
+import services.ReservaValidator;
 import model.Reserva;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
-public class CadastrarReservaController {
+public class CadastrarReservaController extends ControleBase {
 
     @FXML private TextField txtCliente;
     @FXML private ComboBox<String> comboServico;
@@ -29,148 +27,62 @@ public class CadastrarReservaController {
     private final ServicosRepository servRepo = ServicosRepository.getInstance();
     private final ProfissionaisRepository profRepo = ProfissionaisRepository.getInstance();
 
-    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm");
-    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final ReservaValidator validator = new ReservaValidator();
     
     @FXML
     public void initialize() {
         comboServico.getItems().setAll(servRepo.getAll());
         comboProfissional.getItems().setAll(profRepo.getAll());
+        
         comboStatus.getItems().addAll(
-        	    "Agendado",
-        	    "Concluído",
-        	    "Cancelado",
+        	    "Agendada",
+        	    "Concluída",
+        	    "Cancelada",
         	    "Não Compareceu"
         	);
-        comboStatus.getSelectionModel().select("Agendado"); 
+        comboStatus.getSelectionModel().select("Agendada"); 
         
-        carregarHorarios();
-        configurarDatePicker();
+        JavaFXUtils.carregarHorarios(comboHorario);
+        JavaFXUtils.configurarDatePicker(dateData);
 
         btnSalvar.setOnAction(e -> onSalvar());
-        btnCancelar.setOnAction(e -> fechar());
-    }
-
-    private void carregarHorarios() {
-        List<LocalTime> horarios = new ArrayList<>();
-        LocalTime inicio = LocalTime.of(8, 0);
-        LocalTime fim = LocalTime.of(18, 0);
-        while (!inicio.isAfter(fim)) {
-            horarios.add(inicio);
-            inicio = inicio.plusMinutes(30);
-        }
-        comboHorario.getItems().setAll(horarios);
-
-        comboHorario.setCellFactory(cb -> new ListCell<>() {
-            @Override
-            protected void updateItem(LocalTime item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? "" : item.format(TIME_FMT));
-            }
-        });
-        comboHorario.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(LocalTime item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty || item == null ? "" : item.format(TIME_FMT));
-            }
-        });
-    }
-    
-    private void configurarDatePicker() {
-        dateData.setPromptText("dd/MM/yyyy");
-        dateData.setConverter(new javafx.util.StringConverter<LocalDate>() {
-            @Override
-            public String toString(LocalDate date) {
-                return date != null ? DATE_FMT.format(date) : "";
-            }
-
-            @Override
-            public LocalDate fromString(String string) {
-                if (string == null || string.isBlank()) return null;
-                return LocalDate.parse(string, DATE_FMT);
-            }
-        });
+        btnCancelar.setOnAction(this::onCancelar);
     }
 
     @FXML
     private void onSalvar() {
-        String cliente = txtCliente.getText().trim();
-        String servico = comboServico.getValue();
-        String profissional = comboProfissional.getValue();
-        LocalDate data = dateData.getValue();
-        LocalTime horario = comboHorario.getValue();
-        String status = comboStatus.getValue();
-
-        if (cliente.isEmpty()) {
-            aviso("Campo 'Cliente' é obrigatório!");
-            return;
-        }
-
-        if (servico.isEmpty()) {
-            aviso("Campo 'Serviço' é obrigatório!");
-            return;
-        }
-        
-        if (profissional == null || profissional.isBlank()) {
-            aviso("Escolha um profissional.");
-            return;
-        }
-
-        if (data == null) {
-            aviso("Escolha uma data válida!");
-            return;
-        }
-
-        if (!validarHorario(horario)) {
-            aviso("Escolha um horário válido!");
-            return;
-        }
-
-        LocalDate hoje = LocalDate.now();
-        LocalTime agora = LocalTime.now();
-
-        if (data.isBefore(hoje) || (data.isEqual(hoje) && horario.isBefore(agora))) {
-            aviso("A data e horário escolhidos já passaram!");
-            return;
-        }
-        
         Reserva r = new Reserva();
-        r.setCliente(cliente);
-        r.setServico(servico);
-        r.setProfissional(profissional);
-        r.setData(data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        r.setHorario(horario.format(DateTimeFormatter.ofPattern("HH:mm")));
-        r.setStatus(status);
+        r.setCliente(txtCliente.getText().trim());
+        r.setServico(comboServico.getValue());
+        r.setProfissional(comboProfissional.getValue());
+        r.setStatus(comboStatus.getValue());
         
-        if (repo.getAll().stream()
-                .anyMatch(res -> res.conflitaCom(r))) {
-            aviso("Já existe reserva para este profissional neste horário!");
-            return;
+        r.setData(dateData.getValue() != null ? dateData.getValue().format(JavaFXUtils.DATE_FMT) : null);
+        r.setHorario(comboHorario.getValue() != null ? comboHorario.getValue().format(JavaFXUtils.TIME_FMT) : null);
+        
+        List<String> erros = validator.validar(r);
+
+        if (erros.isEmpty()) { 
+            if (validator.existeConflito(r)) { 
+                erros.add("Já existe reserva para este profissional neste horário!");
+            }
+        }
+        
+        if (!erros.isEmpty()) {
+            String mensagemErro = "Não foi possível cadastrar a reserva devido aos seguintes erros:\n\n* " 
+                                + String.join("\n* ", erros);
+            
+            erro(mensagemErro); 
+            return; 
         }
 
-        repo.add(r); 
-        fechar();
+        repo.add(r);
+        sucesso("Reserva cadastrada com sucesso!"); 
+        fechar(btnSalvar);
     }
-    
     
     @FXML
-    private void onCancelar() {
-        fechar();
-    }
-
-    private boolean validarHorario(LocalTime horario) {
-        return horario != null;
-    }
-
-    private void aviso(String texto) {
-        Alert a = new Alert(Alert.AlertType.WARNING, texto, ButtonType.OK);
-        a.setHeaderText(null);
-        a.showAndWait();
-    }
-
-    private void fechar() {
-        Stage stage = (Stage) txtCliente.getScene().getWindow();
-        stage.close();
+	protected void onCancelar(ActionEvent event) {
+        super.onCancelar(event); 
     }
 }

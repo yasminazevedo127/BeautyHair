@@ -1,7 +1,9 @@
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/application/Main.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/AdicionarItemController.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/CadastrarReservaController.java
+/Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/ControleBase.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/EditarReservaController.java
+/Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/JavaFXUtils.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/MainViewController.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/ProfissionaisController.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/control/ServicoController.java
@@ -11,3 +13,4 @@
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/repository/ProfissionaisRepository.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/repository/ReservaRepository.java
 /Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/repository/ServicosRepository.java
+/Users/yasminazevedo/nworkspace/BeautyHair/src/main/java/services/ReservaValidator.java

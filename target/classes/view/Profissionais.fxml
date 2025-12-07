@@ -10,15 +10,20 @@
             styleClass="root" stylesheets="@style.css">
 
     <top>
-        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 15;">
-            <Label text="Profissionais" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+        <HBox styleClass="top-controls-bar">
+            <padding>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </padding>
+            
+            <Label text="Profissionais" styleClass="title-small"/> 
+            
             <Pane HBox.hgrow="ALWAYS"/>
             <Button fx:id="btnAdicionar" text="+ Adicionar" styleClass="button-primary"/>
         </HBox>
     </top>
 
     <center>
-        <VBox spacing="10" style="-fx-padding: 15;">
+        <VBox styleClass="content-container"> 
             <ListView fx:id="listaProfissionais" prefHeight="400"/>
         </VBox>
     </center>

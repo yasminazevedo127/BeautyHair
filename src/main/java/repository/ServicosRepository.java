@@ -1,6 +1,9 @@
 package repository;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken; 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -8,9 +11,11 @@ import java.util.List;
 
 public class ServicosRepository {
 
-    private static ServicosRepository instance;
+    private static final ServicosRepository instance = new ServicosRepository();
+    
     private final String ARQUIVO = "servicos.json";
     private List<String> servicos;
+    private final Gson gson = new Gson();
 
     private ServicosRepository() {
         servicos = new ArrayList<>();
@@ -18,9 +23,6 @@ public class ServicosRepository {
     }
 
     public static ServicosRepository getInstance() {
-        if (instance == null) {
-            instance = new ServicosRepository();
-        }
         return instance;
     }
 
@@ -29,8 +31,10 @@ public class ServicosRepository {
     }
 
     public void add(String servico) {
-        servicos.add(servico);
-        salvar();
+        if (servico != null && !servico.trim().isEmpty()) {
+            servicos.add(servico.trim());
+            salvar();
+        }
     }
 
     public void remove(String servico) {
@@ -38,42 +42,49 @@ public class ServicosRepository {
         salvar();
     }
 
+    
     private void carregar() {
+        if (!Files.exists(Paths.get(ARQUIVO))) {
+            servicos = new ArrayList<>();
+            return;
+        }
+        
         try {
-            if (!Files.exists(Paths.get(ARQUIVO))) {
+            String conteudo = Files.readString(Paths.get(ARQUIVO));
+            
+            if (conteudo.trim().isEmpty()) {
                 servicos = new ArrayList<>();
                 return;
             }
 
-            String conteudo = new String(Files.readAllBytes(Paths.get(ARQUIVO)));
-            conteudo = conteudo.trim();
-            servicos = new ArrayList<>();
-
-            if (!conteudo.isEmpty() && conteudo.startsWith("[") && conteudo.endsWith("]")) {
-                conteudo = conteudo.substring(1, conteudo.length() - 1); // remove [ e ]
-                if (!conteudo.isBlank()) {
-                    String[] items = conteudo.split(",");
-                    for (String item : items) {
-                        servicos.add(item.trim().replaceAll("^\"|\"$", "")); // remove aspas
-                    }
-                }
+            Type listType = new TypeToken<ArrayList<String>>() {}.getType();
+            
+            List<String> loadedList = gson.fromJson(conteudo, listType);
+            
+            if (loadedList != null) {
+                servicos = loadedList;
+            } else {
+                servicos = new ArrayList<>();
             }
+
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("ERRO IO: Falha ao carregar o arquivo " + ARQUIVO + ". " + e.getMessage());
+            servicos = new ArrayList<>();
+        } catch (Exception e) {
+            System.err.println("ERRO JSON: Falha ao deserializar o conteúdo de " + ARQUIVO + ". " + e.getMessage());
             servicos = new ArrayList<>();
         }
     }
 
+ 
     private void salvar() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARQUIVO))) {
-            writer.write("[");
-            for (int i = 0; i < servicos.size(); i++) {
-                writer.write("\"" + servicos.get(i) + "\"");
-                if (i < servicos.size() - 1) writer.write(",");
-            }
-            writer.write("]");
+        try {
+            String jsonContent = gson.toJson(servicos);
+
+            Files.writeString(Paths.get(ARQUIVO), jsonContent);
+            
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("ERRO IO: Falha ao salvar no arquivo " + ARQUIVO + ". " + e.getMessage());
         }
     }
 }

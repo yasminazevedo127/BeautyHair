@@ -55,11 +55,13 @@ public class ReservaFX {
     public Reserva toReserva() {
         Reserva r = new Reserva();
 
-        r.setId(getId());
+        if (getId() > 0) { 
+            r.setId(getId());
+        }
+        
         r.setCliente(getCliente());
         r.setServico(getServico());
         r.setProfissional(getProfissional());
-
         r.setStatus(getStatus()); 
 
         if (data.get() != null) r.setData(data.get().format(DATE_FMT));

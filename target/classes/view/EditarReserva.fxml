@@ -7,15 +7,10 @@
 <VBox xmlns="http://javafx.com/javafx/21" 
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="control.EditarReservaController"
-      spacing="12" stylesheets="@style.css" styleClass="root" prefWidth="420">
-
-
-    <VBox spacing="10">
-        <padding>
-            <Insets top="16" right="16" bottom="16" left="16"/>
-        </padding>
-
-        <Label text="Nome do Cliente" styleClass="form-label"/>
+      stylesheets="@style.css" prefWidth="420"
+      styleClass="root form-root"> 
+	<VBox styleClass="form-inner-container"> 
+		<Label text="Nome do Cliente" styleClass="form-label"/>
         <TextField fx:id="txtCliente" styleClass="form-field"/>
 
         <Label text="Serviço" styleClass="form-label"/>
@@ -25,8 +20,8 @@
           		  prefHeight="32"
           		  styleClass="form-field"/>
           		  
-        <Label text="Profissional"/>
-            <ComboBox fx:id="comboProfissional" 
+        <Label text="Profissional" styleClass="form-label"/> 
+        <ComboBox fx:id="comboProfissional" 
             		  promptText="Selecione um profissional"
             		  maxWidth="Infinity"
           		  	  prefHeight="32"
@@ -49,12 +44,10 @@
                   prefHeight="32"
                   styleClass="form-field"/>
                   
-        <HBox spacing="12" alignment="CENTER_RIGHT" styleClass="button-bar">
-            <padding>
-                <Insets top="10" right="0" bottom="0" left="0"/>
-            </padding>
-
-            <Button fx:id="btnCancelar" text="Cancelar" 
+        <HBox styleClass="button-bar-footer"> 
+        	<Pane HBox.hgrow="ALWAYS"/> 
+        	
+        	<Button fx:id="btnCancelar" text="Cancelar" 
                     styleClass="button-secondary" onAction="#onCancelar"/>
 
             <Button fx:id="btnSalvar" text="Salvar" 

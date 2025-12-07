@@ -19,7 +19,6 @@ public class Reserva {
     public Reserva() {} 
 
     public Reserva(String cliente, String servico, String profissional, String data, String horario, String status) {
-        this.id = contadorId++;
         this.cliente = cliente;
         this.profissional = profissional;
         this.servico = servico;
@@ -27,7 +26,7 @@ public class Reserva {
         this.data = data;
         this.horario = horario;
     }
-
+    
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -49,6 +48,7 @@ public class Reserva {
     public String getHorario() { return horario; }
     public void setHorario(String horario) { this.horario = horario; }
     
+    public static int getContadorId(){ return contadorId; }
     public static void setProximoId(int novoId) { contadorId = novoId; }
     
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -66,9 +66,29 @@ public class Reserva {
     
     public boolean conflitaCom(Reserva outra) {
         if (outra == null) return false;
+
+        if (this.profissional == null || outra.profissional == null) return false;
+        
+        LocalDate thisData = this.getDataAsLocalDate();
+        LocalTime thisHorario = this.getHorarioAsLocalTime();
+        LocalDate outraData = outra.getDataAsLocalDate();
+        LocalTime outraHorario = outra.getHorarioAsLocalTime();
+
+        if (thisData == null || thisHorario == null || outraData == null || outraHorario == null) {
+            return false; 
+        }
+        
         return this.profissional.equals(outra.profissional) &&
-               this.getDataAsLocalDate().equals(outra.getDataAsLocalDate()) &&
-               this.getHorarioAsLocalTime().equals(outra.getHorarioAsLocalTime());
+               thisData.equals(outraData) &&
+               thisHorario.equals(outraHorario);
+    }
+
+    public boolean contemTermo(String termo) {
+        return (getCliente() != null && getCliente().toLowerCase().contains(termo)) ||
+               (getServico() != null && getServico().toLowerCase().contains(termo)) ||
+               (getProfissional() != null && getProfissional().toLowerCase().contains(termo)) ||
+               (getData() != null && getData().toLowerCase().contains(termo)) ||
+               (getHorario() != null && getHorario().toLowerCase().contains(termo));
     }
 
     @Override
